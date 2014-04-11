@@ -50,22 +50,36 @@ namespace Brainfuck
                 switch(c){
                 case '>':mp++; break;
                 case '<':mp--; break;
-                case '+':mem[mp]++; break;
-                case '-':mem[mp]--; break;
+                    case '+': if (mem[mp] != 255) mem[mp]++; else { mem[mp] = (char)0; } break;
+                    case '-': if (mem[mp] != 0) mem[mp]--; else { mem[mp] = (char)255; } break;
                 case '.':Console.Write((mem[mp])); break;
                 case ',':try {
                             mem[mp] = (char)Console.Read();
                          } catch (Exception e) {
                              Debug.Write(e.StackTrace);
                         } break;
-                case '[': if(mem[mp] == 0){
-                            while(com[ip]!=']') ip++;
-                          }break;
-
-                case ']': if(mem[mp] != 0){
-                            while(com[ip]!='[') ip--;
-                          }break;
-                }
+                    case '[': if (mem[mp] == 0)
+                        {
+                            ip++;
+                            int par = 0;
+                            while (!(com[ip] == ']' && par == 0))
+                            {
+                                if (com[ip] == '[') { par++; }
+                                if (com[ip] == ']') { par--; }
+                                ip++;
+                            }
+                        } break;
+                    case ']': if (mem[mp] != 0)
+                        {
+                            ip--;
+                            int par = 0;
+                            while (!(com[ip] == '[' && par == 0))
+                            {
+                                if (com[ip] == '[') { par--; }
+                                if (com[ip] == ']') { par++; }
+                                ip--;
+                            }
+                        } break;
 
                 // increment instruction mp
                 ip++;
